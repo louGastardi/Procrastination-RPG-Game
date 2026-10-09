@@ -91,7 +91,7 @@ class Overworld {
       //Draw gameObjects
       Object.values(this.map.gameObjects)
         .sort((a, b) => {
-          return a.y - b.y;
+          return a.y + a.sortOffset - (b.y + b.sortOffset);
         })
         .forEach((object) => {
           object.sprite.draw(this.ctx, cameraFocus);

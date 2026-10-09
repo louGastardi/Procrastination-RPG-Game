@@ -75,6 +75,17 @@ class OverworldMap {
     }
   }
 
+  //Take an object off the map, e.g. the bottle once it is recycled
+  removeObject(id) {
+    const object = this.gameObjects[id];
+    if (!object) return;
+    delete this.gameObjects[id];
+    //Free its tile if it was blocking the way
+    if (object.isBlocking) {
+      this.removeWall(object.x, object.y);
+    }
+  }
+
   addWall(x, y) {
     this.walls[`${x},${y}`] = true;
   }
@@ -92,8 +103,9 @@ class OverworldMap {
 
 window.OverworldMaps = {
   Home: {
-    lowerSrc: './images/maps/mapHome.png',
-    upperSrc: './images/maps/mapHome_upper.png',
+    //Map images without the props below, built by tools/make_sprites.py
+    lowerSrc: './images/maps/mapHome_noProps.png',
+    upperSrc: './images/maps/mapHome_upper_noProps.png',
     gameObjects: {
       hero: new Person({
         isPlayerControlled: true,
@@ -108,6 +120,40 @@ window.OverworldMaps = {
           { type: 'stand', direction: 'down', time: 1800 },
           { type: 'stand', direction: 'down', time: 1300 },
         ],
+      }),
+
+      //Task props, they change when their task is done
+      bottle: new Prop({
+        x: utils.withGrid(2),
+        y: utils.withGrid(12),
+        offsetY: -16,
+        isFloorItem: true,
+        looks: { default: './images/objects/bottle.png' },
+      }),
+      pizzaBox: new Prop({
+        x: utils.withGrid(14),
+        y: utils.withGrid(7),
+        offsetY: -8,
+        isFloorItem: true,
+        looks: { default: './images/objects/pizzaBox.png' },
+      }),
+      plantBedroom: new Prop({
+        x: utils.withGrid(9),
+        y: utils.withGrid(10),
+        offsetY: -8,
+        looks: { withered: './images/objects/plantBedroom_withered.png', healthy: './images/objects/plantBedroom.png' },
+      }),
+      plantLivingRoom: new Prop({
+        x: utils.withGrid(12),
+        y: utils.withGrid(4),
+        offsetY: -16,
+        looks: { withered: './images/objects/plantLivingRoom_withered.png', healthy: './images/objects/plantLivingRoom.png' },
+      }),
+      plantBath: new Prop({
+        x: utils.withGrid(16),
+        y: utils.withGrid(14),
+        offsetY: -8,
+        looks: { withered: './images/objects/plantBath_withered.png', healthy: './images/objects/plantBath.png' },
       }),
     },
     walls: {

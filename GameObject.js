@@ -5,15 +5,21 @@ class GameObject {
     this.x = config.x || 0;
     this.y = config.y || 0;
     this.direction = config.direction || 'down';
-    this.sprite = new Sprite({
-      gameObject: this,
-      src: config.src || './images/characters/people/npc3.png',
-    });
+    //Draw order offset, objects are drawn from top to bottom by y + sortOffset
+    this.sortOffset = 0;
+    this.sprite = this.createSprite(config);
 
     this.behaviorLoop = config.behaviorLoop || [];
     this.behaviorLoopIndex = 0;
 
     this.talking = config.talking || [];
+  }
+
+  createSprite(config) {
+    return new Sprite({
+      gameObject: this,
+      src: config.src || './images/characters/people/npc3.png',
+    });
   }
 
   mount(map) {

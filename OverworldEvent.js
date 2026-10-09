@@ -91,30 +91,35 @@ class OverworldEvent {
 
   waterPlantBath(resolve) {
     this.plantBath.classList.add('addCheck');
+    this.map.gameObjects.plantBath.setLook('healthy');
 
     resolve();
   }
 
   waterPlantLivingRoom(resolve) {
     this.plantLivingRoom.classList.add('addCheck');
+    this.map.gameObjects.plantLivingRoom.setLook('healthy');
 
     resolve();
   }
 
   waterPlantBedroom(resolve) {
     this.plantBedroom.classList.add('addCheck');
+    this.map.gameObjects.plantBedroom.setLook('healthy');
 
     resolve();
   }
 
   recycleBottle(resolve) {
     this.bottle.classList.add('addCheck');
+    this.map.removeObject('bottle');
 
     resolve();
   }
 
   trashOut(resolve) {
     this.trash.classList.add('addCheck');
+    this.map.removeObject('pizzaBox');
 
     resolve();
   }
