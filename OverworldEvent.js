@@ -77,55 +77,63 @@ class OverworldEvent {
 
   // tasks
 
+  //Check the task off the list and play the chime
+  completeTask(listItem) {
+    if (!listItem.classList.contains('addCheck')) {
+      listItem.classList.add('addCheck');
+      Sound.bling();
+    }
+  }
+
   doLaundry(resolve) {
-    this.laundry.classList.add('addCheck');
+    this.completeTask(this.laundry);
 
     resolve();
   }
 
   goWork(resolve) {
-    this.work.classList.add('addCheck');
+    this.completeTask(this.work);
 
     resolve();
   }
 
   waterPlantBath(resolve) {
-    this.plantBath.classList.add('addCheck');
+    this.completeTask(this.plantBath);
     this.map.gameObjects.plantBath.setLook('healthy');
 
     resolve();
   }
 
   waterPlantLivingRoom(resolve) {
-    this.plantLivingRoom.classList.add('addCheck');
+    this.completeTask(this.plantLivingRoom);
     this.map.gameObjects.plantLivingRoom.setLook('healthy');
 
     resolve();
   }
 
   waterPlantBedroom(resolve) {
-    this.plantBedroom.classList.add('addCheck');
+    this.completeTask(this.plantBedroom);
     this.map.gameObjects.plantBedroom.setLook('healthy');
 
     resolve();
   }
 
   recycleBottle(resolve) {
-    this.bottle.classList.add('addCheck');
+    this.completeTask(this.bottle);
     this.map.removeObject('bottle');
 
     resolve();
   }
 
   trashOut(resolve) {
-    this.trash.classList.add('addCheck');
+    this.completeTask(this.trash);
     this.map.removeObject('pizzaBox');
 
     resolve();
   }
 
   readBook(resolve) {
-    this.book.classList.add('addCheck');
+    this.completeTask(this.book);
 
     resolve();
   }

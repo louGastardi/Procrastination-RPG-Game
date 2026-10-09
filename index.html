@@ -13,6 +13,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
   </head>
   <body>
+    <button id="mute-button" type="button" aria-pressed="false" aria-label="Mute sound (M)" title="Mute sound (M)">
+      <svg viewBox="0 0 16 16" width="32" height="32" shape-rendering="crispEdges" aria-hidden="true">
+        <path fill="currentColor" d="M2 6h3v4H2zM5 5h1v6H5zM6 4h1v8H6zM7 3h1v10H7z" />
+        <path class="icon-waves" fill="currentColor" d="M10 6h1v4h-1zM12 4h1v1h-1zM13 5h1v6h-1zM12 11h1v1h-1z" />
+        <path class="icon-off" fill="currentColor" d="M10 6h1v1h-1zM11 7h1v1h-1zM12 8h1v1h-1zM13 9h1v1h-1zM14 10h1v1h-1zM14 6h1v1h-1zM13 7h1v1h-1zM11 9h1v1h-1zM10 10h1v1h-1z" />
+      </svg>
+    </button>
     <section class="start">
       <div class="start-screen">
         <img src="./images/logo_Big.png" alt="Procrastination" class="TitleScreen-logo" />
@@ -62,6 +69,7 @@
         <ul class="controls-list">
           <li><span class="keys" aria-label="Arrow keys"><kbd class="arrow arrow-up" title="Arrow up"></kbd><kbd class="arrow arrow-down" title="Arrow down"></kbd><kbd class="arrow arrow-left" title="Arrow left"></kbd><kbd class="arrow arrow-right" title="Arrow right"></kbd></span> Walk</li>
           <li><span class="keys"><kbd class="key-space">Space</kbd></span> Next message, close it, interact</li>
+          <li><span class="keys"><kbd>M</kbd></span> Sound on or off</li>
         </ul>
         <p class="controls-tip">Walk onto each task spot to check it off.</p>
       </aside>
@@ -74,6 +82,7 @@
       </div>
     </section>
 
+    <script src="./Sound.js"></script>
     <script src="./utils.js"></script>
     <script src="./TextMessage.js"></script>
     <script src="./KeyPressListener.js"></script>

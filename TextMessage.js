@@ -25,6 +25,7 @@ class TextMessage {
 
   done() {
     if (this.revealingText.isDone) {
+      Sound.blip();
       this.element.remove();
       this.actionListener.unbind();
       this.onComplete();
