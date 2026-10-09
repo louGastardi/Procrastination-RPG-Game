@@ -57,6 +57,8 @@ class Person extends GameObject {
     if (behavior.type === 'stand') {
       this.isStanding = true;
       setTimeout(() => {
+        //An object from a finished game must not wake up the new one
+        if (this.isRetired) return;
         utils.emitEvent('PersonStandComplete', {
           whoId: this.id,
         });

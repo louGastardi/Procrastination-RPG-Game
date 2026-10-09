@@ -1,15 +1,12 @@
 class Overworld {
   constructor(config) {
-    //StartScreen
-    this.startScreen = document.querySelector('#game-intro');
-
     //Element for the game to operate on - Game container
     this.element = config.element;
     this.canvas = this.element.querySelector('.game-canvas');
 
-    //EndScreen
-    this.gameEndScreen = document.querySelector('.game-end');
-    this.gameItens = document.querySelector('.all-elements');
+    //Called with 'win' or 'midnight' once the end transition is done
+    this.onEnd = config.onEnd || (() => {});
+
     //Draw on Canvas
     this.ctx = this.canvas.getContext('2d');
     this.map = null;
@@ -21,17 +18,15 @@ class Overworld {
 
     //Check Game Over
     this.liElements = document.querySelectorAll('.todo-list li');
-    this.gameWinner = false;
-
-    //start Button
-    this.startButton = document.getElementById('start-button');
+    this.isEnding = false;
+    this.isDestroyed = false;
+    this.transition = null;
   }
 
   start() {
-    this.startMap(window.OverworldMaps.Home);
+    this.startMap(window.OverworldMaps.Home());
     this.bindActionInput();
     this.bindHeroPositionCheck();
-    this.gameItens.style.display = 'grid';
     this.directionInput = new DirectionInput();
     this.directionInput.start();
 
@@ -49,17 +44,14 @@ class Overworld {
     if (this.minutes === 60) {
       this.minutes = 0;
       this.hours++;
-      if (this.hours >= 24) {
-        //Stop the clock when the game ends
-        clearInterval(this.clockInterval);
-        this.gameItens.style.display = 'none';
-        this.gameEndScreen.style.display = 'flex';
-      }
     }
 
     this.hoursAndMinutes = `${leadingZero(this.hours)}:${leadingZero(this.minutes)}`;
+    document.querySelector('#clock').innerHTML = this.hoursAndMinutes;
 
-    return (document.querySelector('#clock').innerHTML = this.hoursAndMinutes);
+    if (this.hours >= 24) {
+      this.endGame('midnight');
+    }
   }
 
   startGameLoop() {
@@ -71,6 +63,8 @@ class Overworld {
     }, 1000 / 15);
 
     const frame = () => {
+      if (this.isDestroyed) return;
+
       //Clear off Canvas
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -100,11 +94,10 @@ class Overworld {
       //Draw upper layer
       this.map.drawUpperImage(this.ctx, cameraFocus);
 
+      this.drawTransition();
       this.isGameOver();
 
-      requestAnimationFrame(() => {
-        frame();
-      });
+      this.frameRequest = requestAnimationFrame(frame);
     };
 
     frame();
@@ -112,19 +105,20 @@ class Overworld {
 
   // Restored: these were removed in the "cleanup" commit but start() still calls them
   bindActionInput() {
-    new KeyPressListener('Space', () => {
+    this.actionListener = new KeyPressListener('Space', () => {
       // Is there a person here to talk to?
       this.map.checkForActionCutscene();
     });
   }
 
   bindHeroPositionCheck() {
-    document.addEventListener('PersonWalkingComplete', (e) => {
+    this.heroPositionHandler = (e) => {
       if (e.detail.whoId === 'hero') {
         //Hero's position has changed
         this.map.checkForFootstepCutscene();
       }
-    });
+    };
+    document.addEventListener('PersonWalkingComplete', this.heroPositionHandler);
   }
 
   startMap(mapConfig) {
@@ -134,19 +128,77 @@ class Overworld {
   }
 
   isGameOver() {
-    for (let i = 0; i < this.liElements.length; i++) {
-      if (this.liElements[i].classList.contains('addCheck')) {
-        this.gameWinner = true;
-      } else {
-        this.gameWinner = false;
-        return;
+    if (this.isEnding) return;
+    const allDone = Array.from(this.liElements).every((li) => li.classList.contains('addCheck'));
+    if (allDone) {
+      this.endGame('win');
+    }
+  }
+
+  //Freeze the game, play a jingle and cover the screen with black pixels,
+  //then hand over to the end screen
+  endGame(result) {
+    if (this.isEnding) return;
+    this.isEnding = true;
+
+    //Stop the clock when the game ends
+    clearInterval(this.clockInterval);
+    //The hero stops walking during the transition
+    this.map.isCutscenePlaying = true;
+
+    Sound.stopMusic();
+    if (result === 'win') {
+      Sound.victory();
+    } else {
+      Sound.midnight();
+    }
+
+    //8px blocks in a random order
+    const size = 8;
+    const blocks = [];
+    for (let y = 0; y < this.canvas.height; y += size) {
+      for (let x = 0; x < this.canvas.width; x += size) {
+        blocks.push([x, y]);
       }
     }
-    if (this.gameWinner) {
-      //Stop the clock when the game ends
-      clearInterval(this.clockInterval);
-      document.getElementsByClassName('all-elements')[0].style.display = 'none';
-      document.getElementsByClassName('game-end')[0].style.display = 'flex';
+    for (let i = blocks.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [blocks[i], blocks[j]] = [blocks[j], blocks[i]];
     }
+    this.transition = { start: performance.now(), duration: 1200, size, blocks };
+
+    //Short black pause after the wipe, then show the end screen
+    this.endTimeout = setTimeout(() => {
+      this.stopLoop();
+      this.onEnd(result);
+    }, this.transition.duration + 400);
+  }
+
+  drawTransition() {
+    if (!this.transition) return;
+    const { start, duration, size, blocks } = this.transition;
+    const progress = Math.min(1, (performance.now() - start) / duration);
+    const count = Math.ceil(blocks.length * progress);
+    this.ctx.fillStyle = '#000';
+    for (let i = 0; i < count; i++) {
+      this.ctx.fillRect(blocks[i][0], blocks[i][1], size, size);
+    }
+  }
+
+  stopLoop() {
+    cancelAnimationFrame(this.frameRequest);
+    this.isDestroyed = true;
+  }
+
+  //Remove every timer, loop and listener of this game so a new one can start clean
+  destroy() {
+    this.stopLoop();
+    clearInterval(this.clockInterval);
+    clearTimeout(this.endTimeout);
+    this.directionInput && this.directionInput.stop();
+    this.actionListener && this.actionListener.unbind();
+    document.removeEventListener('PersonWalkingComplete', this.heroPositionHandler);
+    TextMessage.closeAll();
+    this.map && this.map.destroy();
   }
 }

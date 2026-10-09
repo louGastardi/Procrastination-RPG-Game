@@ -21,6 +21,19 @@ class TextMessage {
     this.actionListener = new KeyPressListener('Space', () => {
       this.done();
     });
+    TextMessage.open.add(this);
+  }
+
+  //Remove the message without finishing it, used when a game is reset
+  close() {
+    this.revealingText.warpToDone();
+    this.element.remove();
+    this.actionListener.unbind();
+    TextMessage.open.delete(this);
+  }
+
+  static closeAll() {
+    TextMessage.open.forEach((message) => message.close());
   }
 
   done() {
@@ -28,6 +41,7 @@ class TextMessage {
       Sound.blip();
       this.element.remove();
       this.actionListener.unbind();
+      TextMessage.open.delete(this);
       this.onComplete();
     } else {
       this.revealingText.warpToDone();
@@ -40,3 +54,6 @@ class TextMessage {
     this.revealingText.init();
   }
 }
+
+//Messages on screen right now
+TextMessage.open = new Set();

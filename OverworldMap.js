@@ -10,7 +10,15 @@ class OverworldMap {
     this.upperImage = new Image();
     this.upperImage.src = config.upperSrc;
     this.isCutscenePlaying = false;
-    this.clockIsRunning = Overworld.clockIsRunning;
+    this.isDestroyed = false;
+  }
+
+  //Stop everything this map started, used before a new game begins
+  destroy() {
+    this.isDestroyed = true;
+    Object.values(this.gameObjects).forEach((object) => {
+      object.isRetired = true;
+    });
   }
 
   drawLowerImage(ctx, cameraFocus) {
@@ -115,7 +123,8 @@ const bedroomPlantTask = [
 ];
 
 window.OverworldMaps = {
-  Home: {
+  //A function, so every new game gets fresh objects, walls and positions
+  Home: () => ({
     //Map images without the props below, built by tools/make_sprites.py
     lowerSrc: './images/maps/mapHome_noProps.png',
     upperSrc: './images/maps/mapHome_upper_noProps.png',
@@ -449,5 +458,5 @@ window.OverworldMaps = {
       //   },
       // ],
     },
-  },
+  }),
 };

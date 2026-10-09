@@ -15,16 +15,16 @@ class DirectionInput {
   }
 
   start() {
-    document.addEventListener('keydown', (event) => {
+    this.keydownFunction = (event) => {
       const direction = this.map[event.code];
 
       //RESPONSENESS OF KEYDOWN
       if (direction && this.heldDirections.indexOf(direction) === -1) {
         this.heldDirections.unshift(direction);
       }
-    });
+    };
 
-    document.addEventListener('keyup', (event) => {
+    this.keyupFunction = (event) => {
       const direction = this.map[event.code];
       const index = this.heldDirections.indexOf(direction);
 
@@ -32,6 +32,16 @@ class DirectionInput {
       if (index > -1) {
         this.heldDirections.splice(index, 1);
       }
-    });
+    };
+
+    document.addEventListener('keydown', this.keydownFunction);
+    document.addEventListener('keyup', this.keyupFunction);
+  }
+
+  //Remove the listeners when the game is over
+  stop() {
+    document.removeEventListener('keydown', this.keydownFunction);
+    document.removeEventListener('keyup', this.keyupFunction);
+    this.heldDirections = [];
   }
 }
