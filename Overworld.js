@@ -31,7 +31,7 @@ class Overworld {
     this.startMap(window.OverworldMaps.Home);
     this.bindActionInput();
     this.bindHeroPositionCheck();
-    this.gameItens.style.display = 'block';
+    this.gameItens.style.display = 'grid';
     this.directionInput = new DirectionInput();
     this.directionInput.start();
 
@@ -53,7 +53,7 @@ class Overworld {
         //Stop the clock when the game ends
         clearInterval(this.clockInterval);
         this.gameItens.style.display = 'none';
-        this.gameEndScreen.style.display = 'block';
+        this.gameEndScreen.style.display = 'flex';
       }
     }
 

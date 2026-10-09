@@ -6,6 +6,12 @@
   --menu-border-color: #a48465;
   --menu-font-color: #3a160d;
   --menu-selected-background: #7fc2ff;
+  --accent: #7843e6;
+  --page-background: #343434;
+
+  /* Integer scale keeps the 224px pixel-art canvas sharp */
+  --scale: 3;
+  --game-size: calc(224px * var(--scale));
   font-family: 'Press Start 2P', sans-serif;
 }
 
@@ -14,10 +20,11 @@
 }
 
 body {
-  background-color: #343434;
+  background-color: var(--page-background);
   padding: 0;
   margin: 0;
   overflow: hidden;
+  min-height: 100vh;
 }
 
 .all-elements,
@@ -25,58 +32,85 @@ body {
   display: none;
 }
 
+/* GAME LAYOUT: equal side columns keep the game screen centered */
+.all-elements {
+  grid-template-columns: minmax(0, 1fr) var(--game-size) minmax(0, 1fr);
+  align-items: center;
+  column-gap: 32px;
+  width: 100%;
+  min-height: 100vh;
+  padding: 16px;
+}
+
 .itens {
+  justify-self: end;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
 /* TAMANHO DA TELA */
+.game-frame {
+  width: var(--game-size);
+  height: var(--game-size);
+}
+
 .game-container {
   width: 224px;
   height: 224px;
-  margin: 0 auto;
+  position: relative;
   outline: 1px solid #fff;
   background-color: rgb(137, 206, 139);
-  transform: scale(3) translateY(50%);
-
-  position: relative;
-  top: -1100px;
-  left: 100px;
+  transform: scale(var(--scale));
+  transform-origin: top left;
 }
 
+/* CLOCK */
 .clock-container {
   position: relative;
-  left: 200px;
-  top: -309px;
+  width: 200px;
+}
+
+.clock-bg {
+  display: block;
+  width: 200px;
 }
 
 #clock {
-  position: relative;
-  top: 120px;
-  left: 30px;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  transform: translateY(-40%);
+  text-align: center;
   font-size: 30px;
   color: white;
 }
 
-.clock-bg {
-  width: 200px;
-}
-
+/* TO DO LIST */
 .todo-list-container {
   position: relative;
-  top: -250px;
-  left: 50px;
+  width: 340px;
+}
+
+.todo-bg {
+  display: block;
+  width: 100%;
 }
 
 .todo-list {
-  font-weight: 500;
+  position: absolute;
+  top: 24%;
+  left: 4%;
+  right: 3%;
+  margin: 0;
+  padding: 0;
   list-style-type: none;
-  line-height: 2.5em;
-  position: relative;
-  top: 480px;
-  left: -20px;
+  line-height: 2.2em;
   color: black;
-  font-size: 18px;
+  font-size: 11px;
 }
 
 .addCheck {
@@ -85,11 +119,121 @@ body {
   text-decoration-color: #ff0000aa;
 }
 
-.todo-bg {
-  width: 30%;
-}
-
 /* IMAGE SHARP  */
 .game-container canvas {
+  display: block;
   image-rendering: pixelated;
+}
+
+/* CONTROLS HELP */
+.controls {
+  color: #fff;
+  border: 3px solid #fff;
+  background-color: var(--border-color);
+  padding: 16px;
+  line-height: 1.6;
+}
+
+.controls--game {
+  justify-self: start;
+  max-width: 300px;
+}
+
+.controls-title {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: var(--dialog-background);
+}
+
+.controls-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 10px;
+}
+
+.controls-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.keys {
+  display: flex;
+  gap: 4px;
+}
+
+kbd {
+  display: inline-block;
+  min-width: 26px;
+  padding: 5px 6px;
+  font-family: inherit;
+  font-size: 10px;
+  text-align: center;
+  color: var(--menu-font-color);
+  background-color: var(--dialog-background);
+  border: 2px solid var(--menu-border-color);
+  border-bottom-width: 4px;
+  border-radius: 4px;
+}
+
+.key-space {
+  min-width: 96px;
+}
+
+.controls-tip {
+  margin: 0;
+  font-size: 9px;
+  color: var(--menu-background);
+}
+
+/* Smaller screens: drop to 2x so the whole layout still fits */
+@media (max-width: 1340px), (max-height: 760px) {
+  :root {
+    --scale: 2;
+  }
+  .todo-list-container {
+    width: 280px;
+  }
+  .todo-list {
+    font-size: 9px;
+  }
+}
+
+/* Arrow key caps drawn with CSS so every arrow looks the same */
+kbd.arrow {
+  position: relative;
+  width: 26px;
+  height: 26px;
+}
+
+kbd.arrow::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+}
+
+kbd.arrow-up::before {
+  border-bottom: 7px solid var(--menu-font-color);
+  transform: translate(-50%, -75%);
+}
+
+kbd.arrow-down::before {
+  border-top: 7px solid var(--menu-font-color);
+  transform: translate(-50%, -25%);
+}
+
+kbd.arrow-left::before {
+  border-right: 7px solid var(--menu-font-color);
+  transform: translate(-75%, -50%);
+}
+
+kbd.arrow-right::before {
+  border-left: 7px solid var(--menu-font-color);
+  transform: translate(-25%, -50%);
 }

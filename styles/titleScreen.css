@@ -1,52 +1,56 @@
-.start {
-  position: absolute;
-  left: 300px;
-  top: -900px;
-}
-
-.game-winner {
-  position: absolute;
-  left: 300px;
-  top: -1900px;
-}
-
-.start-screen {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
+.start,
+.game-end {
+  min-height: 100vh;
+  padding: 16px;
+  align-items: center;
   justify-content: center;
 }
 
-#end-image {
-  position: relative;
-  left: -150px;
+.start {
+  display: flex;
 }
 
+.start-screen,
 .end-screen {
-  margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+  gap: 24px;
 }
 
-.TitleScreen_logo {
-  max-width: 50px;
-  image-rendering: initial;
+.TitleScreen-logo {
+  display: block;
+  width: min(720px, 90vw);
+  max-height: 42vh;
+  object-fit: contain;
 }
 
 #start-button,
 #restart-button {
   font-family: 'Press Start 2P', sans-serif;
-  padding: 10px 20px;
-  margin: 50px 100px;
+  padding: 14px 40px;
   font-size: 22px;
-  background-color: #7843e6;
+  background-color: var(--accent);
   color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-#start-button :hover {
+#start-button:hover {
   background-color: #4b2891;
+}
+
+.controls--start {
+  text-align: left;
+  max-width: 560px;
+}
+
+.controls--start .controls-list li {
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
 }
 
 .start-screen p,
