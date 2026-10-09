@@ -105,6 +105,29 @@ class Overworld {
     frame();
   }
 
+  // Restored: these were removed in the "cleanup" commit but start() still calls them
+  bindActionInput() {
+    new KeyPressListener('Space', () => {
+      // Is there a person here to talk to?
+      this.map.checkForActionCutscene();
+    });
+  }
+
+  bindHeroPositionCheck() {
+    document.addEventListener('PersonWalkingComplete', (e) => {
+      if (e.detail.whoId === 'hero') {
+        //Hero's position has changed
+        this.map.checkForFootstepCutscene();
+      }
+    });
+  }
+
+  startMap(mapConfig) {
+    this.map = new OverworldMap(mapConfig);
+    this.map.overworld = this;
+    this.map.mountObjects();
+  }
+
   isGameOver() {
     for (let i = 0; i < this.liElements.length; i++) {
       if (this.liElements[i].classList.contains('addCheck')) {
