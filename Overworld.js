@@ -20,7 +20,7 @@ class Overworld {
     this.clockIsRunning = true;
 
     //Check Game Over
-    this.liElements = document.getElementsByTagName('li');
+    this.liElements = document.querySelectorAll('.todo-list li');
     this.gameWinner = false;
 
     //start Button
