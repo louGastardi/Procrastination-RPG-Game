@@ -36,9 +36,13 @@ class Person extends GameObject {
     //block character from walking into object
     if (behavior.type === 'walk') {
       if (state.map.isSpaceTaken(this.x, this.y, this.direction)) {
-        setTimeout(() => {
-          this.startBehavior(state, behavior);
-        }, 50);
+        //Only scripted walks retry. A retry loop for the hero would keep
+        //overwriting its direction mid-step and push it off the 16px grid,
+        //which breaks wall collisions and task tiles.
+        behavior.retry &&
+          setTimeout(() => {
+            this.startBehavior(state, behavior);
+          }, 50);
         return;
       }
 
