@@ -58,6 +58,10 @@ class OverworldMap {
   checkForFootstepCutscene() {
     const hero = this.gameObjects['hero'];
     const match = this.cutSceneSpaces[`${hero.x},${hero.y}`];
+    //A finished task does not trigger again
+    if (match && match[0].taskId && document.getElementById(match[0].taskId).classList.contains('addCheck')) {
+      return;
+    }
     if (!this.isCutscenePlaying && match) {
       this.startCutscene(match[0].events);
     }
@@ -100,6 +104,15 @@ class OverworldMap {
     this.addWall(x, y);
   }
 }
+
+//The living room and bathroom plants have walls on both sides, so they are
+//watered only from the front. The bedroom plant is reachable from three tiles.
+const bedroomPlantTask = [
+  {
+    taskId: 'plant-bedroom',
+    events: [{ type: 'textMessage', text: 'Cool! You have completed a task!' }, { type: 'waterPlantBedroom' }],
+  },
+];
 
 window.OverworldMaps = {
   Home: {
@@ -348,46 +361,52 @@ window.OverworldMaps = {
 
       [utils.asGridCoord(2, 4)]: [
         {
+          taskId: 'book',
           events: [{ type: 'textMessage', text: 'Cool! You have completed a task!' }, { type: 'readBook' }],
         },
       ],
       [utils.asGridCoord(23, 6)]: [
         {
+          taskId: 'work',
           events: [{ type: 'textMessage', text: 'Cool! You have completed a task!' }, { type: 'goWork' }],
         },
       ],
 
       [utils.asGridCoord(24, 13)]: [
         {
+          taskId: 'laundry',
           events: [{ type: 'textMessage', text: 'Cool! You have completed a task!' }, { type: 'doLaundry' }],
         },
       ],
 
       [utils.asGridCoord(14, 7)]: [
         {
+          taskId: 'trash',
           events: [{ type: 'textMessage', text: 'Cool! You have completed a task!' }, { type: 'trashOut' }],
         },
       ],
 
       [utils.asGridCoord(2, 12)]: [
         {
+          taskId: 'bottle',
           events: [{ type: 'textMessage', text: 'Cool! You have completed a task!' }, { type: 'recycleBottle' }],
         },
       ],
 
-      [utils.asGridCoord(9, 9)]: [
-        {
-          events: [{ type: 'textMessage', text: 'Cool! You have completed a task!' }, { type: 'waterPlantBedroom' }],
-        },
-      ],
+      //Bedroom plant: from the tile in front and the tiles on both sides
+      [utils.asGridCoord(9, 9)]: bedroomPlantTask,
+      [utils.asGridCoord(8, 10)]: bedroomPlantTask,
+      [utils.asGridCoord(10, 10)]: bedroomPlantTask,
       [utils.asGridCoord(12, 5)]: [
         {
+          taskId: 'plant-livingRoom',
           events: [{ type: 'textMessage', text: 'Cool! You have completed a task!' }, { type: 'waterPlantLivingRoom' }],
         },
       ],
 
       [utils.asGridCoord(17, 14)]: [
         {
+          taskId: 'plant-bath',
           events: [{ type: 'textMessage', text: 'Cool! You have completed a task!' }, { type: 'waterPlantBath' }],
         },
       ],
