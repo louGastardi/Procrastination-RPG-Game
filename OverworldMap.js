@@ -38,7 +38,7 @@ class OverworldMap {
   //Play cutscene
   async startCutscene(events) {
     this.isCutscenePlaying = true;
-
+    this.overworld.clockIsRunning = false;
     for (let i = 0; i < events.length; i++) {
       const eventHandler = new OverworldEvent({
         event: events[i],
@@ -47,6 +47,7 @@ class OverworldMap {
       await eventHandler.init();
     }
 
+    this.overworld.clockIsRunning = true;
     this.isCutscenePlaying = false;
 
     //Reset NPCs to their default behavior

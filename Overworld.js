@@ -50,6 +50,8 @@ class Overworld {
       this.minutes = 0;
       this.hours++;
       if (this.hours >= 24) {
+        //Stop the clock when the game ends
+        clearInterval(this.clockInterval);
         this.gameItens.style.display = 'none';
         this.gameEndScreen.style.display = 'block';
       }
@@ -61,8 +63,11 @@ class Overworld {
   }
 
   startGameLoop() {
-    setInterval(() => {
-      this.clock();
+    this.clockInterval = setInterval(() => {
+      //Clock pauses while a cutscene (text message) is on screen
+      if (this.clockIsRunning) {
+        this.clock();
+      }
     }, 1000 / 15);
 
     const frame = () => {
@@ -138,6 +143,8 @@ class Overworld {
       }
     }
     if (this.gameWinner) {
+      //Stop the clock when the game ends
+      clearInterval(this.clockInterval);
       document.getElementsByClassName('all-elements')[0].style.display = 'none';
       document.getElementsByClassName('game-end')[0].style.display = 'flex';
     }
