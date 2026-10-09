@@ -2,7 +2,8 @@ class KeyPressListener {
   constructor(keyCode, callback) {
     let keySafe = true;
     this.keydownFunction = function (event) {
-      if (event.code === keyCode) {
+      //Holding a key down must not fire again and again
+      if (event.code === keyCode && !event.repeat) {
         if (keySafe) {
           keySafe = false;
           callback();
